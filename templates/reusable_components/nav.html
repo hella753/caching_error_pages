@@ -28,28 +28,21 @@
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     {% cache 60 navbar %}
                         <div class="navbar-nav mx-auto">
-                            <a href="{% url 'store:index' %}" class="nav-item nav-link {{ home }}">მთავარი</a>
+                            <a href="{% url 'store:index' %}" class="nav-item nav-link">მთავარი</a>
                             <a href="{% url 'store:category_listings' %}"
-                               class="nav-item nav-link {{ shop }}">მაღაზია</a>
+                               class="nav-item nav-link">მაღაზია</a>
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">კატეგორიები</a>
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
                                     {% for category in categories_root %}
-                                        {% if request.path == "/category/"|add:category.slug|add:"/" %}
                                             <a href="{% url 'store:category_listings' category.slug %}"
-                                               class="dropdown-item active">{{ category.category_name }}</a>
-                                        {% else %}
-                                            <a href="{% url 'store:category_listings' category.slug %}"
-                                               class="dropdown-item">{{ category.category_name }}</a>
-                                        {% endif %}
-
+                                               class="dropdown-item ">{{ category.category_name }}</a>
                                     {% endfor %}
                                 </div>
                             </div>
-                            <a href="{% url 'store:contact' %}" class="nav-item nav-link {{ contact }}">კონტაქტი</a>
+                            <a href="{% url 'store:contact' %}" class="nav-item nav-link">კონტაქტი</a>
                         </div>
                     {% endcache navbar %}
-
 
                     <div class="d-flex m-3 me-0">
                         <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"

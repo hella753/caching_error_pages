@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db.models import Count
@@ -20,7 +21,10 @@ class IndexView(SearchMixin, ListView):
     context_object_name = "reviews"
 
 
-@method_decorator(cache_page(60 * 1), name="dispatch")
+# Ok I give up. Cannot find a way to exclude the navigation from caching
+# when I use the per-view cache. I've accepted the defeat.
+# @method_decorator(cache_page(60 * 1), name="dispatch")
+# So I'll use cache api for context to reduce the number of queries.
 class CategoryListingsView(ListView):
     """
     filters:
@@ -71,25 +75,36 @@ class CategoryListingsView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         categories = Category.objects.filter(parent__isnull=True)
-        product_tags = ProductTags.objects.all()
+
+        if cache.get("product_tags") is None:
+            product_tags = ProductTags.objects.all()
+            cache.set("product_tags", product_tags, 60)
 
         category_slug = self.kwargs.get("slug")
         if category_slug:
-            category = Category.objects.filter(slug=category_slug)
-            categories = (
-                category
-                .get_descendants(include_self=False)
-                .annotate(count=Count("product") + Count('children__product'))
-            )
+            if cache.get("category") is None:
+                category = Category.objects.filter(slug=category_slug)
+                cache.set("category", category, 60)
+
+            if cache.get("categories") is None:
+                categories = (
+                    cache.get("category")
+                    .get_descendants(include_self=False)
+                    .annotate(count=Count("product") + Count('children__product'))
+                )
+                cache.set("categories", categories, 60)
         else:
-            categories = (
-                categories
-                .get_descendants(include_self=True)
-                .annotate(count=Count('product') + Count('children__product'))
-                .filter(parent__isnull=True)
-            )
-        context["categories"] = categories
-        context["product_tags"] = product_tags
+            if cache.get("categories") is None:
+                categories = (
+                    categories
+                    .get_descendants(include_self=True)
+                    .annotate(count=Count('product') + Count('children__product'))
+                    .filter(parent__isnull=True)
+                )
+                cache.set("categories", categories, 60)
+
+        context["categories"] = cache.get("categories")
+        context["product_tags"] = cache.get("product_tags")
         return context
 
 
@@ -141,3 +156,4 @@ class PageNotFound(TemplateView):
 class InternalServerError(View):
     def get(self, request, *args, **kwargs):
         raise Exception
+
