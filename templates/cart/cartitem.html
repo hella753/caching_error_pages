@@ -1,0 +1,35 @@
+{% load static %}
+{% for cart_item in cart_items %}
+    <form action="{% url "order:delete_from_cart" cart_item.id %}" method="POST">
+        {% csrf_token %}
+        <tr>
+            <th scope="row">
+                <div class="d-flex align-items-center">
+                    <img src="{{ cart_item.product.product_image.crop.80x80 }}" class="img-fluid me-5 rounded-circle"
+                         style="width: 80px; height: 80px;" alt="">
+                </div>
+            </th>
+            <td>
+                <p class="mb-0 mt-4">{{ cart_item.product.product_name }}</p>
+            </td>
+            <td>
+                <p class="mb-0 mt-4">{{ cart_item.product.product_price }}$</p>
+            </td>
+            <td>
+                <div class="input-group quantity mt-4" style="width: 100px;">
+                    <input type="text" name="quantity" class="form-control form-control-sm text-center border-0"
+                           value={{ cart_item.product_quantity }}>
+                </div>
+            </td>
+            <td>
+                <p class="mb-0 mt-4">{{ cart_item.total_price }}$</p>
+            </td>
+            <td>
+                <input type="hidden" name="product" value="{{ cart_item.product.id }}">
+                <button type="submit" value="Delete" class="btn btn-md rounded-circle bg-light border mt-4">
+                    <i class="fa fa-times text-danger"></i>
+                </button>
+            </td>
+        </tr>
+    </form>
+{% endfor %}

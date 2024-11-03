@@ -1,0 +1,42 @@
+{% extends 'product_detail/base_detail.html' %}
+{% load static %}
+{% block detailcontent %}
+    <!-- Single Product Start -->
+    <div class="container-fluid py-5 mt-5">
+        <div class="container py-5">
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8 col-xl-9">
+                    <div class="row g-4">
+                        {% include 'product_detail/product_info.html' %}
+                        {% include 'product_detail/form-review.html' %}
+                    </div>
+                </div>
+                <div class="col-lg-4 col-xl-3">
+                    <div class="row g-4 fruite">
+                        <div class="col-lg-12">
+                            <form action=".", method="GET">
+                            <div class="input-group w-100 mx-auto d-flex mb-4">
+                                <input type="search" name="q" class="form-control p-3" placeholder="მოძებნე"
+                                       aria-describedby="search-icon-1">
+                                <button type="submit" id="search-icon-1" class="input-group-text p-3"><i
+                                        class="fa fa-search"></i></button>
+                            </div>
+                            </form>
+                            <div class="mb-4">
+                                {% include 'shop/category.html'%}
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            {% include 'shop/banner.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Single Product End -->
+
+
+{% endblock detailcontent %}

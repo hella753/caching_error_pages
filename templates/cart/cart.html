@@ -1,0 +1,36 @@
+{% extends 'cart/base_cart.html' %}
+
+{% block nav %}
+    {% include 'reusable_components/nav.html' with cart="active" %}
+{% endblock nav %}
+
+{% block cartcontent %}
+    {% load static %}
+    <!-- Cart Page Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    {% include 'cart/table_headers.html' %}
+                    </thead>
+                    <tbody>
+                    {% include 'cart/cartitem.html' %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-5">
+                <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
+                <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon
+                </button>
+            </div>
+
+            <div class="row g-4 justify-content-end">
+                <div class="col-8"></div>
+                {% include 'cart/cart-total.html'%}
+            </div>
+        </div>
+    </div>
+    <!-- Cart Page End -->
+{% endblock cartcontent %}

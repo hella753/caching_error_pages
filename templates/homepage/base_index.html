@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% comment %}
+extends from base.html changes the title and navbar's active page.
+has block content for header hero and features. After that goes the
+indexcontent which is in the index.html.
+{% endcomment %}
+
+{% block title %}
+    Fruitables - Fruit and Vegetables
+{% endblock %}
+
+{% block nav %}
+    {% include 'reusable_components/nav.html' with home="active"%}
+{% endblock nav %}
+
+{% block content %}
+    {% block header %}
+        <!-- Hero Start -->
+        {% include 'homepage/hero.html' %}
+        <!-- Hero End -->
+
+        <!-- Featurs Section Start -->
+        <div class="container-fluid featurs py-5">
+            <div class="container py-5">
+                <div class="row g-4">
+                    {% include 'homepage/featurs.html' with title_feature="Free Shipping" desc_feature="Free on order over $300" icon_feature="car-side" %}
+                    {% include 'homepage/featurs.html' with title_feature="Security Payment" desc_feature="100% security payment" icon_feature="user-shield" %}
+                    {% include 'homepage/featurs.html' with title_feature="30 Day Return" desc_feature="30 day money guarantee" icon_feature="exchange-alt" %}
+                    {% include 'homepage/featurs.html' with title_feature="24/7 Support" desc_feature="Support every time fast" icon_feature="phone-alt" %}
+                </div>
+            </div>
+        </div>
+        <!-- Featurs Section End -->
+    {% endblock header %}
+    {% block indexcontent %}
+
+    {% endblock indexcontent %}
+{% endblock content %}

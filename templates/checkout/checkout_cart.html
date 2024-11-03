@@ -1,0 +1,30 @@
+{% load static %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Products</th>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for cart_item in cart_items %}
+        <tr>
+            <th scope="row">
+                <div class="d-flex align-items-center mt-2">
+                    <img src="{{ cart_item.product.product_image.crop.80x80 }}" class="img-fluid rounded-circle"
+                         style="width: 90px; height: 90px;"
+                         alt="">
+                </div>
+            </th>
+            <td class="py-5">{{ cart_item.product.product_name }}</td>
+            <td class="py-5">${{ cart_item.product.product_price }}</td>
+            <td class="py-5">{{ cart_item.product_quantity }}</td>
+            <td class="py-5">${{ cart_item.total_price }}</td>
+        </tr>
+    {% endfor %}
+    {% include 'checkout/total.html' %}
+    </tbody>
+</table>

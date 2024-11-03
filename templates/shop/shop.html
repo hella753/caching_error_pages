@@ -1,0 +1,25 @@
+{% extends 'shop/base_shop.html' %}
+
+{% load static %}
+{% block shopcontent %}
+    {# shop start #}
+    <div class="container-fluid fruite py-5">
+        <div class="container py-5">
+            <h1 class="mb-4">Fresh fruits shop</h1>
+
+            <div class="row g-4">
+                {% include 'shop/form.html' %}
+                <div class="col-lg-9">
+                    <div class="row g-4 justify-content-center">
+                        {% for product in object_list %}
+                            {% include 'shop/product.html' %}
+                        {% endfor %}
+                    </div>
+                    {% include 'shop/pagination.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {# shop end #}
+
+{% endblock shopcontent %}

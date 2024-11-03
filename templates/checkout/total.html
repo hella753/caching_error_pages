@@ -1,0 +1,30 @@
+<tr>
+    <th scope="row">
+    </th>
+    <td class="py-5"></td>
+    <td class="py-5">
+        <p class="mb-0 text-dark py-3">Subtotal</p>
+    </td>
+    <td class="py-5">
+        <div class="py-3 border-bottom border-top">
+            <p class="mb-0 text-dark">${{ subtotal }}</p>
+        </div>
+    </td>
+</tr>
+<tr>
+    {% include 'checkout/shipping.html' %}
+</tr>
+<tr>
+    <th scope="row">
+    </th>
+    <td class="py-5">
+        <p class="mb-0 text-dark text-uppercase py-3">TOTAL</p>
+    </td>
+    <td class="py-5"></td>
+    <td class="py-5"></td>
+    <td class="py-5">
+        <div class="py-3 border-bottom border-top">
+            <p class="mb-0 text-dark">${{ total }}</p>
+        </div>
+    </td>
+</tr>

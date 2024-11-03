@@ -1,0 +1,11 @@
+.idea/
+__pycache__/
+django_template_urls/__pycache__/
+order/__pycache__/
+order/migrations/__pycache__/
+store/__pycache__/
+store/migrations/__pycache__/
+user/__pycache__/
+user/migrations/__pycache__/
+.venv/
+static_common/

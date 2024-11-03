@@ -1,0 +1,49 @@
+{% extends 'registration/base_login.html' %}
+
+{% block logincontent %}
+    {% if form.errors %}
+        {% for field, message in form.errors.as_data.items %}
+            {% for mes in message %}
+                {{ field }}: {{ mes }}
+                <br/>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="col-md-12 col-lg-6 col-xl-7"
+             style="margin-left: 520px; width: 400px; margin-bottom: 10px; background-color:beige; margin-top: 50px; border: 1px solid darkolivegreen; border-radius: 10px">
+            <div class="form-item">
+                <div style="margin-left: 50px; margin-right: 50px;">
+                    <label class="form-label my-3">მომხმარებლის სახელი</label><sup>*</sup>
+                    <input type="text" name="username" class="form-control">
+                </div>
+            </div>
+            <div class="form-item">
+                <div style="margin-left: 50px; margin-right: 50px;">
+                    <label class="form-label my-3">ელ. ფოსტის მისამართი</label>
+                    <input type="text" name="email" class="form-control">
+                </div>
+            </div>
+            <div class="form-item">
+                <div style="margin-left: 50px; margin-right: 50px;">
+                    <label class="form-label my-3">პაროლი</label><sup>*</sup>
+                    <input type="password" name="password1" class="form-control" placeholder="">
+                </div>
+            </div>
+            <div class="form-item">
+                <div style="margin-left: 50px; margin-right: 50px;">
+                    <label class="form-label my-3">გაიმეორე პაროლი</label><sup>*</sup>
+                    <input type="password" name="password2" class="form-control" placeholder="">
+                </div>
+            </div>
+            <div class="form-item" style="margin-top: 30px; margin-left: 100px">
+                <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                        type="submit">რეგისტრაცია
+                </button>
+                <input type="hidden" name="next" value="{{ next }}">
+            </div>
+        </div>
+    </form>
+{% endblock %}

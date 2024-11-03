@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% comment %}
+extends from base.html changes the title and navbar's active page.
+has block content for header hero and features. After that goes the
+contactcontent which is in the contact.html.
+{% endcomment %}
+
+{% block title %}
+    Contact
+{% endblock %}
+
+{% block nav %}
+    {% include 'reusable_components/nav.html' with contact="active" %}
+{% endblock nav %}
+
+{% block content %}
+    {% block header %}
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">კონტაქტი</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="{% url "store:index" %}">მთავარი</a></li>
+                <li class="breadcrumb-item active text-white">კონტაქტი</li>
+            </ol>
+        </div>
+        <!-- Single Page Header End -->
+
+    {% endblock header %}
+    {% block contactcontent %}
+
+    {% endblock contactcontent %}
+{% endblock content %}
+
+
+

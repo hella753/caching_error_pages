@@ -1,0 +1,21 @@
+{% load static %}
+
+{% comment %}
+This displays what the company offers
+has some variables to adjust styling
+is displayed in index.html
+{% endcomment %}
+
+<div class="col-md-6 col-lg-4">
+    <a href="#">
+        <div class="service-item {{ color_item }} rounded border border-secondary">
+            <img src="{% static image %}" class="img-fluid rounded-top w-100" alt="">
+            <div class="px-4 rounded-bottom">
+                <div class="service-content {{ color_content }} text-center p-4 rounded">
+                    <h5 class={{ color_text }}>{{ title }}</h5>
+                    <h3 class="mb-0">{{ text }}</h3>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>

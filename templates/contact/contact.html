@@ -1,0 +1,17 @@
+{% extends 'contact/base_contact.html' %}
+{% block contactcontent %}
+    <!-- Contact Start -->
+    <div class="container-fluid contact py-5">
+        <div class="container py-5">
+            <div class="p-5 bg-light rounded">
+                <div class="row g-4">
+                    {% include 'contact/text.html' %}
+                    {% include 'contact/map.html' %}
+                    {% include 'contact/form.html' %}
+                    {% include 'contact/short_info.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contact End -->
+{% endblock contactcontent %}

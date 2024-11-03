@@ -1,0 +1,35 @@
+{% load static %}
+
+<div class="col-md-6 col-lg-6 col-xl-4">
+    <a href="{% url "store:product" product.slug %}">
+        <div class="rounded position-relative fruite-item">
+            <div class="fruite-img">
+                <img src="{{ product.product_image.crop.306x214 }}" class="img-fluid w-100 rounded-top"
+                     alt="">
+            </div>
+            {% if product.tags.all is not None %}
+                {% for tag in product.tags.all %}
+                    <div class="text-white bg-secondary px-3 py-1 rounded position-absolute"
+                         style="top: 10px; left: 10px;">{{ tag }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                <form action="{% url "order:add_to_cart" %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{ product.id }}">
+                    <input type="hidden" name="product_quantity" value="1">
+                    <h4>{{ product.product_name }}</h4>
+                    <p>{{ product_description }}</p>
+                    <div class="d-flex justify-content-between flex-lg-wrap">
+                        <p class="text-dark fs-5 fw-bold mb-0">ლ{{ product.product_price }} / კგ</p>
+                        <button type="submit" class="btn border border-secondary rounded-pill px-3 text-primary"><i
+                                class="fa fa-shopping-bag me-2 text-primary"></i> დაამატე კალათაში
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </a>
+</div>
+

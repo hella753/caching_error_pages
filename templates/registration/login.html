@@ -1,0 +1,55 @@
+{% extends 'registration/base_login.html' %}
+{% block logincontent %}
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.</p>
+        {% else %}
+            <p>Please login to see this page.</p>
+        {% endif %}
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'user:logout' %}">
+            {% csrf_token %}
+            <div style="margin-left: 550px; margin-top: 20px">
+                თქვენ შესული ხართ სისტემაში როგორც {{ user.username }}.<br/>
+                გსურთ გამოსვლა?
+            </div>
+            <div style="margin-left: 630px; margin-top: 20px">
+                <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                        type="submit">გამოსვლა
+                </button>
+            </div>
+        </form>
+    {% else %}
+        <form method="POST" action="{% url 'user:login' %}">
+            {% csrf_token %}
+            <div class="col-md-12 col-lg-6 col-xl-7"
+                 style="margin-left: 560px; width: 300px; margin-bottom: 10px; background-color:beige; margin-top: 50px; border: 1px solid darkolivegreen; border-radius: 10px">
+                <div class="form-item">
+                    <div style="margin-left: 50px; margin-right: 50px;">
+                        <label class="form-label my-3">მომხმარებლის სახელი</label>
+                        <input type="text" name="username" class="form-control">
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div style="margin-left: 50px; margin-right: 50px;">
+                        <label class="form-label my-3">პაროლი</label>
+                        <input type="password" name="password" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="form-item" style="margin-top: 30px; margin-left: 50px">
+                    <button class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                            type="submit">ავტორიზაცია
+                    </button>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </div>
+            </div>
+            <p style="margin-left: 560px">გაიარე ავტორიზაცია ან <a href={% url "user:register" %}>დარეგისტრირდი</a></p>
+        </form>
+    {% endif %}
+{% endblock %}

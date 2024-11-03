@@ -1,0 +1,19 @@
+{% load pagination_filtering %}
+<div class="col-12">
+    <div class="pagination d-flex justify-content-center mt-5">
+        {% if page_obj.has_previous %}
+            <a href="?page={{page_obj.previous_page_number}}{% filtered_url fruitlist=param.fruitlist q=param.q p=param.p t=param.t %}" class="rounded">&laquo;</a>
+        {% endif %}
+        {% for page_num in paginator.page_range %}
+            {% if page_obj.number == page_num %}
+                <a href="?page={{ page_num }}{% filtered_url fruitlist=param.fruitlist q=param.q p=param.p t=param.t %}" class="rounded active">{{ page_num }}</a>
+            {% else %}
+                <a href="?page={{ page_num }}{% filtered_url fruitlist=param.fruitlist q=param.q p=param.p t=param.t %}" class="rounded">{{ page_num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a href="?page={{page_obj.next_page_number}}{% filtered_url fruitlist=param.fruitlist q=param.q p=param.p t=param.t %}" class="rounded">&raquo;</a>
+        {% endif %}
+
+    </div>
+</div>

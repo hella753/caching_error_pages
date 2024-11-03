@@ -1,0 +1,57 @@
+<form action="." method="GET" style="width: 324px; display: inline-block">
+    <div>
+        <div class="input-group w-100 mx-auto d-flex">
+            <input type="search" name="q" class="form-control p-3" placeholder="მოძებნე"
+                   aria-describedby="search-icon-1">
+            <button type="submit" id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+    {% include 'shop/category.html' %}
+
+    <div>
+        <div>
+            <div class="mb-3">
+                <h4 class="mb-2">ფასი</h4>
+                <input type="range" name="p" class="form-range w-100" id="rangeInput"
+                       min="0" max="100" oninput="amount.value=p.value" value={{ p.value }}>
+                <output id="amount" name="amount" min-velue="0" max-value="500" for="rangeInput">0
+                </output>
+            </div>
+        </div>
+        <div>
+            <div class="mb-3">
+                <h4>დამატებითი</h4>
+                {% for tag in product_tags.all %}
+                    <div class="mb-2">
+                        <input type="radio" name="t" class="me-2" id="Categories-1" name="Categories-1"
+                               value="{{ tag.id }}">
+                        <label for="Categories-3">{{ tag }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="margin-top: 20px">
+            <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+                <label for="fruits">სორტირება :</label>
+                <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3">
+                    <option name="nothing" value="1" {% if param.fruitlist == "1" %}selected{% endif %}>არაფერი
+                    </option>
+                    <option name="price" value="2" {% if param.fruitlist == "2" %}selected{% endif %}>ფასის
+                        მიხედვით
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center my-4">
+            <button type="submit"
+                    class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">
+                გაფილტრე
+            </button>
+        </div>
+
+
+        {% include 'shop/banner.html' %}
+
+    </div>
+</form>

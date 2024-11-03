@@ -1,0 +1,74 @@
+{% load static %}
+<div class="col-lg-6">
+    <div class="border rounded">
+        <a href="#">
+            <img src="{{ product.product_image.crop.469x469 }}" class="img-fluid rounded" alt="Image">
+        </a>
+    </div>
+</div>
+
+<div class="col-lg-6">
+    <form action="{% url "order:add_to_cart" %}" method="POST">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div style="display: inline-block">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% csrf_token %}
+        <input type="hidden" name="product" value="{{ product.id }}">
+        <h4 class="fw-bold mb-3">{{ product.product_name }}</h4>
+        <p class="mb-3">Category: {{ product.product_category.first.category_name }}</p>
+        <h5 class="fw-bold mb-3">{{ product.product_price }} $</h5>
+        <div class="d-flex mb-4">
+            <i class="fa fa-star text-secondary"></i>
+            <i class="fa fa-star text-secondary"></i>
+            <i class="fa fa-star text-secondary"></i>
+            <i class="fa fa-star text-secondary"></i>
+            <i class="fa fa-star"></i>
+        </div>
+        <p class="mb-4">The generated Lorem Ipsum is therefore always free from repetition injected
+            humour, or non-characteristic words etc.</p>
+        <p class="mb-4">{{ product.product_description }}</p>
+
+        <div class="input-group quantity mb-5" style="width: 100px;">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-sm btn-minus rounded-circle bg-light border">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+            <input type="text" name="product_quantity" class="form-control form-control-sm text-center border-0"
+                   value="{{ quantity }}" min="1">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-sm btn-plus rounded-circle bg-light border">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <button type="submit" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i
+                class="fa fa-shopping-bag me-2 text-primary"></i> დაამატე კალათაში
+        </button>
+    </form>
+</div>
+
+<!-- description and reviews -->
+<div class="col-lg-12">
+    <nav>
+        <div class="nav nav-tabs mb-3">
+            <button class="nav-link active border-white border-bottom-0" type="button"
+                    role="tab"
+                    id="nav-about-tab" data-bs-toggle="tab" data-bs-target="#nav-about"
+                    aria-controls="nav-about" aria-selected="true">აღწერა
+            </button>
+            <button class="nav-link border-white border-bottom-0" type="button" role="tab"
+                    id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                    aria-controls="nav-mission" aria-selected="false">შეფასებები
+            </button>
+        </div>
+    </nav>
+    <div class="tab-content mb-5">
+        {% include 'product_detail/description.html' %}
+        {% include 'product_detail/reviews.html' %}
+    </div>
+</div>

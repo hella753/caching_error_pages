@@ -1,0 +1,43 @@
+{% extends 'homepage/base_index.html' %}
+{% load static %}
+{% block indexcontent %}
+
+    {# Features #}
+    <div class="container-fluid service py-5">
+        <div class="container py-5">
+            <div class="row g-4 justify-content-center">
+                {% include 'homepage/benefit.html' with color_item="bg-secondary" color_content="bg-primary" title="Fresh Apples" color_text="text-white" text="20% OFF" image="img/featur-1.jpg" %}
+                {% include 'homepage/benefit.html' with color_item="bg-dark" color_content="bg-light" title="Tasty Fruits" color_text="text-primary" text="Free delivery" image="img/featur-2.jpg" %}
+                {% include 'homepage/benefit.html' with color_item="bg-primary" color_content="bg-secondary" title="Exotic Vegitable" color_text="text-white" text="Discount 30$" image="img/featur-3.jpg" %}
+            </div>
+        </div>
+    </div>
+    {# Features end #}
+
+
+    {# Banner #}
+    {% include 'homepage/banner.html' %}
+    {# Banner end #}
+
+    {# Fact #}
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="bg-light p-5 rounded">
+                <div class="row g-4 justify-content-center">
+                    {% include 'homepage/fact.html' with text="satisfied customers" num="1963" %}
+                    {% include 'homepage/fact.html' with text="quality of service" num="99%" %}
+                    {% include 'homepage/fact.html' with text="quality certificates" num="33" %}
+                    {% include 'homepage/fact.html' with text="Available Products" num="789" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {# Fact end #}
+
+
+    {# testimonial #}
+    {% include 'homepage/testimonial-home.html' with reviews=reviews %}
+    {# testimonial end #}
+
+
+{% endblock indexcontent %}
