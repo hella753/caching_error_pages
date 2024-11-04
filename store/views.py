@@ -59,41 +59,31 @@ class CategoryListingsView(ListView):
                 queryset = super().get_queryset().prefetch_related("product_category", "tags")
                 cache.set(cache_key, queryset, 60)
 
-        if self.request.GET.get('q'):
-            cache_key = f"filtered_queryset_{queryset}"
-            queryset = cache.get(cache_key)
+        q = self.request.GET.get('q')
+        t = self.request.GET.get('t')
+        p = self.request.GET.get('p')
+        fruit_list = self.request.GET.get("fruitlist")
+
+        if q or t or p or fruit_list:
+            cache_filter_key = f"filtered_queryset_{queryset}"
+            queryset = cache.get(cache_filter_key)
+
             if queryset is None:
                 queryset = cache.get("products").filter(
-                    product_name__icontains=self.request.GET.get('q')
-                ).prefetch_related("tags")
-                cache_key = f"filtered_queryset_{queryset}"
-                cache.set(cache_key, queryset, 60)
+                    product_name__icontains=q,
+                    product_price__lte=float(p),
+                )
 
-        if self.request.GET.get('t') or self.request.GET.get('p'):
-            cache_key = f"filtered_queryset_{queryset}"
-            queryset = cache.get(cache_key)
-            if queryset is None:
-                tags = None
-                if self.request.GET.get('t'):
-                    tags = str(self.request.GET.get('t'))
+                if fruit_list == "2":
+                    queryset = queryset.order_by("product_price")
+                if t:
+                    tags = t
+                    queryset = queryset.filter(tags__in=tags)
 
-                queryset = cache.get("products").filter(
-                    product_price__lte=float(self.request.GET.get('p'))
-                ).prefetch_related("tags")
 
-                if tags:
-                    queryset = cache.get("products").filter(tags=tags).prefetch_related("tags")
-                cache_key = f"filtered_queryset_{queryset}"
-                cache.set(cache_key, queryset, 60)
-
-        if self.request.GET.get("fruitlist"):
-            cache_key = f"filtered_queryset_{queryset}"
-            queryset = cache.get(cache_key)
-            if queryset is None:
-                if self.request.GET.get("fruitlist") == "2":
-                    queryset = cache.get("products").order_by("product_price")
-                    cache_key = f"filtered_queryset_{queryset}"
-                    cache.set(cache_key, queryset, 60)
+                queryset = queryset.prefetch_related("tags")
+                cache_filter_key = f"filtered_queryset_{queryset}"
+                cache.set(cache_filter_key, queryset, 60)
 
         return queryset
 
