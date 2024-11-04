@@ -54,7 +54,9 @@ class AddToCartView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Product of this quantity is not in stock!')
+        messages.error(
+            self.request, 'Product of this quantity is not in stock!'
+        )
         return redirect(self.request.META.get('HTTP_REFERER', ''))
 
 

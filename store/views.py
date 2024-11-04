@@ -22,7 +22,7 @@ class IndexView(SearchMixin, ListView):
 
 
 # Ok I give up. Cannot find a way to exclude the navigation from caching
-# when I use the per-view cache. I've accepted the defeat.
+# when I use the per-view cache_page.
 # @method_decorator(cache_page(60 * 1), name="dispatch")
 # So I'll use cache api for context to reduce the number of queries.
 class CategoryListingsView(ListView):
@@ -90,7 +90,9 @@ class CategoryListingsView(ListView):
                 categories = (
                     cache.get("category")
                     .get_descendants(include_self=False)
-                    .annotate(count=Count("product") + Count('children__product'))
+                    .annotate(
+                        count=Count("product") + Count('children__product')
+                    )
                 )
                 cache.set("categories", categories, 60)
         else:
@@ -98,7 +100,9 @@ class CategoryListingsView(ListView):
                 categories = (
                     categories
                     .get_descendants(include_self=True)
-                    .annotate(count=Count('product') + Count('children__product'))
+                    .annotate(
+                        count=Count('product') + Count('children__product')
+                    )
                     .filter(parent__isnull=True)
                 )
                 cache.set("categories", categories, 60)
@@ -156,4 +160,3 @@ class PageNotFound(TemplateView):
 class InternalServerError(View):
     def get(self, request, *args, **kwargs):
         raise Exception
-
