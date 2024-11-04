@@ -21,10 +21,10 @@ class IndexView(SearchMixin, ListView):
     context_object_name = "reviews"
 
 
-# Ok I give up. Cannot find a way to exclude the navigation from caching
-# when I use the per-view cache_page.
-# @method_decorator(cache_page(60 * 1), name="dispatch")
-# I'm using low level cache api to reduce the number of queries,
+# Cannot find a way to exclude the navigation from caching when I use
+# the cache_page @method_decorator(cache_page(60 * 1), name="dispatch")
+# So I'm using low level cache api, but if there is a way to do it with
+# the cache_page let me know.
 class CategoryListingsView(ListView):
     """
     filters:
@@ -39,7 +39,6 @@ class CategoryListingsView(ListView):
 
     def get_queryset(self):
         category_slug = self.kwargs.get("slug")
-
         if category_slug:
             cache_key = f"products_{category_slug}"
             queryset = cache.get(cache_key)
@@ -56,35 +55,32 @@ class CategoryListingsView(ListView):
             cache_key = "products"
             queryset = cache.get(cache_key)
             if queryset is None:
-                queryset = super().get_queryset().prefetch_related("product_category", "tags")
+                queryset = super().get_queryset().prefetch_related(
+                    "product_category",
+                    "tags"
+                )
                 cache.set(cache_key, queryset, 60)
 
         q = self.request.GET.get('q')
         t = self.request.GET.get('t')
         p = self.request.GET.get('p')
         fruit_list = self.request.GET.get("fruitlist")
-
         if q or t or p or fruit_list:
             cache_filter_key = f"filtered_queryset_{queryset}"
             queryset = cache.get(cache_filter_key)
-
             if queryset is None:
                 queryset = cache.get("products").filter(
                     product_name__icontains=q,
                     product_price__lte=float(p),
                 )
-
                 if fruit_list == "2":
                     queryset = queryset.order_by("product_price")
                 if t:
                     tags = t
                     queryset = queryset.filter(tags__in=tags)
-
-
                 queryset = queryset.prefetch_related("tags")
                 cache_filter_key = f"filtered_queryset_{queryset}"
                 cache.set(cache_filter_key, queryset, 60)
-
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -96,15 +92,12 @@ class CategoryListingsView(ListView):
             cache.set("product_tags", product_tags, 60)
 
         category_slug = self.kwargs.get("slug")
-
         if category_slug:
             cache_key = f"categories_{category_slug}"
             category_cache_key = category_slug
-
             if cache.get(category_cache_key) is None:
                 category = Category.objects.filter(slug=category_slug)
                 cache.set(category_cache_key, category, 60)
-
             if cache.get(cache_key) is None:
                 categories = (
                     cache.get(category_cache_key)
@@ -115,7 +108,6 @@ class CategoryListingsView(ListView):
                 )
                 cache.set(cache_key, categories, 60)
             context["categories"] = cache.get(cache_key)
-
         else:
             cache_key = "categories"
             if cache.get(cache_key) is None:
@@ -129,7 +121,6 @@ class CategoryListingsView(ListView):
                 )
                 cache.set(cache_key, categories, 60)
             context["categories"] = cache.get(cache_key)
-
         context["product_tags"] = cache.get("product_tags")
         return context
 
