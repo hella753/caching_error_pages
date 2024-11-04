@@ -24,7 +24,7 @@ class IndexView(SearchMixin, ListView):
 # Ok I give up. Cannot find a way to exclude the navigation from caching
 # when I use the per-view cache_page.
 # @method_decorator(cache_page(60 * 1), name="dispatch")
-# So I'll use cache api for context to reduce the number of queries.
+# I'm using low level cache api to reduce the number of queries,
 class CategoryListingsView(ListView):
     """
     filters:
@@ -38,79 +38,108 @@ class CategoryListingsView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        category_slug = self.kwargs.get("slug")
+
+        if category_slug:
+            cache_key = f"products_{category_slug}"
+            queryset = cache.get(cache_key)
+            if queryset is None:
+                category = Category.objects.filter(slug=category_slug)
+                categories = category.get_descendants(include_self=True)
+                queryset = (
+                    super().get_queryset()
+                    .filter(product_category__in=categories)
+                    .prefetch_related("tags")
+                )
+                cache.set(cache_key, queryset, 60)
+        else:
+            cache_key = "products"
+            queryset = cache.get(cache_key)
+            if queryset is None:
+                queryset = super().get_queryset().prefetch_related("product_category", "tags")
+                cache.set(cache_key, queryset, 60)
 
         if self.request.GET.get('q'):
-            queryset = queryset.filter(
-                product_name__icontains=self.request.GET.get('q')
-            ).prefetch_related("tags")
+            cache_key = f"filtered_queryset_{queryset}"
+            queryset = cache.get(cache_key)
+            if queryset is None:
+                queryset = cache.get("products").filter(
+                    product_name__icontains=self.request.GET.get('q')
+                ).prefetch_related("tags")
+                cache_key = f"filtered_queryset_{queryset}"
+                cache.set(cache_key, queryset, 60)
 
         if self.request.GET.get('t') or self.request.GET.get('p'):
-            tags = None
-            if self.request.GET.get('t'):
-                tags = str(self.request.GET.get('t'))
+            cache_key = f"filtered_queryset_{queryset}"
+            queryset = cache.get(cache_key)
+            if queryset is None:
+                tags = None
+                if self.request.GET.get('t'):
+                    tags = str(self.request.GET.get('t'))
 
-            queryset = queryset.filter(
-                product_price__lte=float(self.request.GET.get('p'))
-            ).prefetch_related("tags")
+                queryset = cache.get("products").filter(
+                    product_price__lte=float(self.request.GET.get('p'))
+                ).prefetch_related("tags")
 
-            if tags:
-                queryset = queryset.filter(tags=tags).prefetch_related("tags")
+                if tags:
+                    queryset = cache.get("products").filter(tags=tags).prefetch_related("tags")
+                cache_key = f"filtered_queryset_{queryset}"
+                cache.set(cache_key, queryset, 60)
 
         if self.request.GET.get("fruitlist"):
-            if self.request.GET.get("fruitlist") == "2":
-                queryset = queryset.order_by("product_price")
+            cache_key = f"filtered_queryset_{queryset}"
+            queryset = cache.get(cache_key)
+            if queryset is None:
+                if self.request.GET.get("fruitlist") == "2":
+                    queryset = cache.get("products").order_by("product_price")
+                    cache_key = f"filtered_queryset_{queryset}"
+                    cache.set(cache_key, queryset, 60)
 
-        category_slug = self.kwargs.get("slug")
-        if category_slug:
-            category = Category.objects.filter(slug=category_slug)
-            categories = category.get_descendants(include_self=True)
-            queryset = (
-                queryset
-                .filter(product_category__in=categories)
-                .prefetch_related("tags")
-            )
-        return queryset.prefetch_related("product_category", "tags")
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        categories = Category.objects.filter(parent__isnull=True)
 
-        if cache.get("product_tags") is None:
+        product_tags = cache.get("product_tags")
+        if product_tags is None:
             product_tags = ProductTags.objects.all()
             cache.set("product_tags", product_tags, 60)
 
         category_slug = self.kwargs.get("slug")
-        if category_slug:
-            cache.delete("categories")
-            cache.delete("category")
-            if cache.get("category") is None:
-                category = Category.objects.filter(slug=category_slug)
-                cache.set("category", category, 60)
 
-            if cache.get("categories") is None:
+        if category_slug:
+            cache_key = f"categories_{category_slug}"
+            category_cache_key = category_slug
+
+            if cache.get(category_cache_key) is None:
+                category = Category.objects.filter(slug=category_slug)
+                cache.set(category_cache_key, category, 60)
+
+            if cache.get(cache_key) is None:
                 categories = (
-                    cache.get("category")
+                    cache.get(category_cache_key)
                     .get_descendants(include_self=False)
                     .annotate(
                         count=Count("product") + Count('children__product')
                     )
                 )
-                cache.set("categories", categories, 60)
+                cache.set(cache_key, categories, 60)
+            context["categories"] = cache.get(cache_key)
+
         else:
-            cache.delete("categories")
-            if cache.get("categories") is None:
+            cache_key = "categories"
+            if cache.get(cache_key) is None:
                 categories = (
-                    categories
+                    Category.objects.all()
                     .get_descendants(include_self=True)
                     .annotate(
                         count=Count('product') + Count('children__product')
                     )
                     .filter(parent__isnull=True)
                 )
-                cache.set("categories", categories, 60)
+                cache.set(cache_key, categories, 60)
+            context["categories"] = cache.get(cache_key)
 
-        context["categories"] = cache.get("categories")
         context["product_tags"] = cache.get("product_tags")
         return context
 

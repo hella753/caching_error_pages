@@ -22,7 +22,7 @@
         <div>
             <div class="mb-3">
                 <h4>დამატებითი</h4>
-                {% for tag in product_tags.all %}
+                {% for tag in product_tags %}
                     <div class="mb-2">
                         <input type="radio" name="t" class="me-2" id="Categories-1" name="Categories-1"
                                value="{{ tag.id }}">
