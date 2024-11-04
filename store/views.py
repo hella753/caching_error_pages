@@ -82,6 +82,8 @@ class CategoryListingsView(ListView):
 
         category_slug = self.kwargs.get("slug")
         if category_slug:
+            cache.delete("categories")
+            cache.delete("category")
             if cache.get("category") is None:
                 category = Category.objects.filter(slug=category_slug)
                 cache.set("category", category, 60)
@@ -96,6 +98,7 @@ class CategoryListingsView(ListView):
                 )
                 cache.set("categories", categories, 60)
         else:
+            cache.delete("categories")
             if cache.get("categories") is None:
                 categories = (
                     categories
